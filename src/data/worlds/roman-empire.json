@@ -1,0 +1,9 @@
+{
+  "id": "roman-empire",
+  "order": 3,
+  "name": "האימפריה הרומית",
+  "subtitle": "Pax Romana",
+  "whyItMatters": "הנדסה אדירה (אמות מידה, כבישים), התפשטות צבאית עצומה לאורך אירופה ואסיה, המעבר מרפובליקה לאימפריה ולבסוף עליית הנצרות.",
+  "theme": { "primary": "#7c2d12", "secondary": "#450a0a", "accent": "#eab308" },
+  "missions": []
+}
