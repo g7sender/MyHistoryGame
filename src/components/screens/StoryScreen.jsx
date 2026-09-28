@@ -1,6 +1,7 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { getMissionById, getWorldById } from '../../data/worlds.js'
 import { useGameProgress } from '../../state/GameProgressContext.jsx'
+import { publicUrl } from '../../utils/publicUrl.js'
 import TopBar from '../ui/TopBar.jsx'
 import PlayerStatsBar from '../ui/PlayerStatsBar.jsx'
 
@@ -31,7 +32,7 @@ export default function StoryScreen() {
       <main className="flex-1 px-4 pt-6">
         {mission.story.image && (
           <img
-            src={mission.story.image}
+            src={publicUrl(mission.story.image)}
             alt={mission.story.imageAlt || mission.title}
             className="mb-4 max-h-56 w-full rounded-xl object-cover"
           />

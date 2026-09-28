@@ -1,11 +1,26 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { getMissionById, getWorldById } from '../../data/worlds.js'
 import { useGameProgress } from '../../state/GameProgressContext.jsx'
-import { shuffleArray } from '../../utils/shuffleArray.js'
 import TopBar from '../ui/TopBar.jsx'
 import PlayerStatsBar from '../ui/PlayerStatsBar.jsx'
-import AnswerOption from '../ui/AnswerOption.jsx'
+import MultipleChoiceChallenge from '../challenges/MultipleChoiceChallenge.jsx'
+import TimelineOrderChallenge from '../challenges/TimelineOrderChallenge.jsx'
+import MatchingChallenge from '../challenges/MatchingChallenge.jsx'
+import ImageChallenge from '../challenges/ImageChallenge.jsx'
+import MapLocationChallenge from '../challenges/MapLocationChallenge.jsx'
+import WhoAmIChallenge from '../challenges/WhoAmIChallenge.jsx'
+import SpeedChoiceChallenge from '../challenges/SpeedChoiceChallenge.jsx'
+
+const CHALLENGE_COMPONENTS = {
+  'multiple-choice': MultipleChoiceChallenge,
+  'timeline-order': TimelineOrderChallenge,
+  matching: MatchingChallenge,
+  image: ImageChallenge,
+  'map-location': MapLocationChallenge,
+  'who-am-i': WhoAmIChallenge,
+  'speed-choice': SpeedChoiceChallenge,
+}
 
 export default function ChallengeScreen() {
   const { worldId, missionId } = useParams()
@@ -13,14 +28,7 @@ export default function ChallengeScreen() {
   const world = getWorldById(worldId)
   const mission = getMissionById(world, missionId)
   const { isMissionUnlocked, completeMission, recordAnswer } = useGameProgress()
-  const [selectedIndex, setSelectedIndex] = useState(null)
-
-  // מערבבים את סדר האפשרויות בכל פעם שנכנסים למשימה, כדי שהתשובה הנכונה
-  // לא תהיה תמיד באותו מקום. כל איבר שומר את originalIndex כדי לבדוק נכונות.
-  const shuffledOptions = useMemo(() => {
-    if (!mission) return []
-    return shuffleArray(mission.challenge.options.map((label, originalIndex) => ({ label, originalIndex })))
-  }, [mission])
+  const [result, setResult] = useState(null)
 
   if (!world || !mission) return <Navigate to="/" replace />
   if (!isMissionUnlocked(world, mission.id)) {
@@ -28,25 +36,19 @@ export default function ChallengeScreen() {
   }
 
   const { challenge } = mission
-  const hasAnswered = selectedIndex !== null
-  const isCorrect = hasAnswered && shuffledOptions[selectedIndex].originalIndex === challenge.correctIndex
+  const hasAnswered = result !== null
+  const ChallengeWidget = CHALLENGE_COMPONENTS[challenge.type || 'multiple-choice']
 
-  function handleSelect(index) {
+  function handleAnswered(correct) {
     if (hasAnswered) return
-    setSelectedIndex(index)
+    setResult(correct)
     completeMission(mission.id)
-    recordAnswer(shuffledOptions[index].originalIndex === challenge.correctIndex)
-  }
-
-  function optionState(index) {
-    if (!hasAnswered) return 'idle'
-    if (shuffledOptions[index].originalIndex === challenge.correctIndex) return 'correct'
-    if (index === selectedIndex) return 'wrong'
-    return 'idle'
+    recordAnswer(correct)
   }
 
   return (
     <div
+      key={mission.id}
       className="flex min-h-full flex-col pb-6"
       style={{
         '--world-primary': world.theme.primary,
@@ -61,25 +63,15 @@ export default function ChallengeScreen() {
         <h2 className="mb-5 text-lg font-bold leading-relaxed text-white">
           {challenge.question}
         </h2>
-        <div className="flex flex-col gap-3">
-          {shuffledOptions.map((option, index) => (
-            <AnswerOption
-              key={option.label}
-              label={option.label}
-              state={optionState(index)}
-              disabled={hasAnswered}
-              onClick={() => handleSelect(index)}
-            />
-          ))}
-        </div>
+        <ChallengeWidget challenge={challenge} onAnswered={handleAnswered} />
 
         {hasAnswered && (
           <div
             className={`mt-5 rounded-xl border p-4 ${
-              isCorrect ? 'border-green-400 bg-green-500/10' : 'border-red-400 bg-red-500/10'
+              result ? 'border-green-400 bg-green-500/10' : 'border-red-400 bg-red-500/10'
             }`}
           >
-            <p className="font-bold text-white">{isCorrect ? 'תשובה נכונה! 🎉' : 'לא בדיוק...'}</p>
+            <p className="font-bold text-white">{result ? 'תשובה נכונה! 🎉' : 'לא בדיוק...'}</p>
             <p className="mt-2 text-sm leading-relaxed text-white/80">{challenge.explanation}</p>
           </div>
         )}
