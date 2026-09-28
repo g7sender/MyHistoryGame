@@ -5,5 +5,6 @@
   "subtitle": "Pax Romana",
   "whyItMatters": "הנדסה אדירה (אמות מידה, כבישים), התפשטות צבאית עצומה לאורך אירופה ואסיה, המעבר מרפובליקה לאימפריה ולבסוף עליית הנצרות.",
   "theme": { "primary": "#7c2d12", "secondary": "#450a0a", "accent": "#eab308" },
+  "mapPosition": { "x": 28, "y": 27 },
   "missions": []
 }

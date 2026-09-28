@@ -1,13 +1,33 @@
-// שכבת אחסון להתקדמות השחקן. כרגע ה"אחסון" הוא רק זיכרון תהליך (מתאפס ברענון).
-// כשנרצה שמירה אמיתית (localStorage / שרת) - מספיק להחליף את שתי הפונקציות פה,
-// בלי לגעת ב-GameProgressContext או ברכיבים שצורכים אותו.
+// שכבת אחסון להתקדמות השחקן, מגובה ב-localStorage כדי לשרוד רענון/סגירת דפדפן.
 
-let memoryState = { completedMissionIds: [] }
+const STORAGE_KEY = 'history-game-progress'
+
+function defaultState() {
+  return {
+    completedMissionIds: [],
+    hearts: 3,
+    heartsLastRegenAt: Date.now(),
+    xp: 0,
+    coins: 0,
+    streak: 0,
+    bestStreak: 0,
+  }
+}
 
 export function loadProgress() {
-  return memoryState
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return defaultState()
+    return { ...defaultState(), ...JSON.parse(raw) }
+  } catch {
+    return defaultState()
+  }
 }
 
 export function saveProgress(state) {
-  memoryState = state
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+  } catch {
+    // אחסון לא זמין (מצב פרטי, quota וכו') - ממשיכים בלי לשבור את המשחק
+  }
 }

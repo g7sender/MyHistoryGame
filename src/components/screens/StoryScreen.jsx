@@ -2,6 +2,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { getMissionById, getWorldById } from '../../data/worlds.js'
 import { useGameProgress } from '../../state/GameProgressContext.jsx'
 import TopBar from '../ui/TopBar.jsx'
+import PlayerStatsBar from '../ui/PlayerStatsBar.jsx'
 
 export default function StoryScreen() {
   const { worldId, missionId } = useParams()
@@ -26,6 +27,7 @@ export default function StoryScreen() {
       }}
     >
       <TopBar title={mission.title} subtitle={world.name} />
+      <PlayerStatsBar />
       <main className="flex-1 px-4 pt-6">
         {mission.story.image && (
           <img

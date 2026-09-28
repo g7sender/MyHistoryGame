@@ -4,6 +4,7 @@ import { getMissionById, getWorldById } from '../../data/worlds.js'
 import { useGameProgress } from '../../state/GameProgressContext.jsx'
 import { shuffleArray } from '../../utils/shuffleArray.js'
 import TopBar from '../ui/TopBar.jsx'
+import PlayerStatsBar from '../ui/PlayerStatsBar.jsx'
 import AnswerOption from '../ui/AnswerOption.jsx'
 
 export default function ChallengeScreen() {
@@ -11,7 +12,7 @@ export default function ChallengeScreen() {
   const navigate = useNavigate()
   const world = getWorldById(worldId)
   const mission = getMissionById(world, missionId)
-  const { isMissionUnlocked, completeMission } = useGameProgress()
+  const { isMissionUnlocked, completeMission, recordAnswer } = useGameProgress()
   const [selectedIndex, setSelectedIndex] = useState(null)
 
   // מערבבים את סדר האפשרויות בכל פעם שנכנסים למשימה, כדי שהתשובה הנכונה
@@ -34,6 +35,7 @@ export default function ChallengeScreen() {
     if (hasAnswered) return
     setSelectedIndex(index)
     completeMission(mission.id)
+    recordAnswer(shuffledOptions[index].originalIndex === challenge.correctIndex)
   }
 
   function optionState(index) {
@@ -54,6 +56,7 @@ export default function ChallengeScreen() {
       }}
     >
       <TopBar title={mission.title} subtitle={world.name} />
+      <PlayerStatsBar />
       <main className="flex-1 px-4 pt-6">
         <h2 className="mb-5 text-lg font-bold leading-relaxed text-white">
           {challenge.question}

@@ -1,13 +1,12 @@
 import { Navigate, useParams } from 'react-router-dom'
 import { getWorldById } from '../../data/worlds.js'
-import { useGameProgress } from '../../state/GameProgressContext.jsx'
 import TopBar from '../ui/TopBar.jsx'
-import MissionCard from '../ui/MissionCard.jsx'
+import PlayerStatsBar from '../ui/PlayerStatsBar.jsx'
+import MissionPath from '../ui/MissionPath.jsx'
 
 export default function MissionBoard() {
   const { worldId } = useParams()
   const world = getWorldById(worldId)
-  const { isMissionUnlocked, isMissionCompleted } = useGameProgress()
 
   if (!world) return <Navigate to="/" replace />
 
@@ -22,18 +21,10 @@ export default function MissionBoard() {
       }}
     >
       <TopBar title={world.name} subtitle={world.subtitle} />
+      <PlayerStatsBar />
       <p className="px-4 pb-4 pt-4 text-sm leading-relaxed text-white/70">{world.whyItMatters}</p>
-      <main className="flex flex-col gap-3 px-4">
-        {world.missions.map((mission, index) => (
-          <MissionCard
-            key={mission.id}
-            world={world}
-            mission={mission}
-            index={index}
-            unlocked={isMissionUnlocked(world, mission.id)}
-            completed={isMissionCompleted(mission.id)}
-          />
-        ))}
+      <main className="pb-6">
+        <MissionPath world={world} />
       </main>
     </div>
   )
