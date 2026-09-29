@@ -8,6 +8,7 @@ import romanEmpire from './worlds/roman-empire.json'
 import middleAges from './worlds/middle-ages.json'
 import renaissance from './worlds/renaissance.json'
 import ageOfDiscovery from './worlds/age-of-discovery.json'
+import americanRevolution from './worlds/american-revolution.json'
 import industrialRevolution from './worlds/industrial-revolution.json'
 import worldWars from './worlds/world-wars.json'
 import coldWar from './worlds/cold-war.json'
@@ -20,6 +21,7 @@ const worlds = [
   middleAges,
   renaissance,
   ageOfDiscovery,
+  americanRevolution,
   industrialRevolution,
   worldWars,
   coldWar,
