@@ -3,23 +3,29 @@ import { useGameProgress } from '../../state/GameProgressContext.jsx'
 
 const ROW_HEIGHT = 112
 const NODE_SIZE = 64
+const BOSS_NODE_SIZE = 76
 // מיקום אופקי (אחוזים, 0-100) של כל node לפי מחזור של 4, כדי ליצור מסלול מתפתל
 const WAVE_X = [50, 74, 50, 26]
 
 export default function MissionPath({ world }) {
-  const { isMissionUnlocked, isMissionCompleted } = useGameProgress()
+  const { isMissionUnlocked, isMissionCompleted, isBossUnlocked, isBossCompleted } = useGameProgress()
   const missions = world.missions
+  const hasBoss = Boolean(world.boss)
+  const rowCount = missions.length + (hasBoss ? 1 : 0)
+
   const points = missions.map((mission, index) => ({
     mission,
     index,
     x: WAVE_X[index % WAVE_X.length],
     y: index * ROW_HEIGHT + ROW_HEIGHT / 2,
   }))
-  const totalHeight = missions.length * ROW_HEIGHT
+  const bossPoint = hasBoss
+    ? { x: WAVE_X[missions.length % WAVE_X.length], y: missions.length * ROW_HEIGHT + ROW_HEIGHT / 2 }
+    : null
+  const totalHeight = rowCount * ROW_HEIGHT
 
-  const linePath = points
-    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
-    .join(' ')
+  const linePoints = hasBoss ? [...points, { ...bossPoint }] : points
+  const linePath = linePoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ')
 
   return (
     <div className="relative px-4" style={{ height: totalHeight }}>
@@ -76,6 +82,39 @@ export default function MissionPath({ world }) {
           </div>
         )
       })}
+
+      {hasBoss &&
+        (() => {
+          const unlocked = isBossUnlocked(world)
+          const completed = isBossCompleted(world.id)
+          const node = (
+            <div
+              className={`flex shrink-0 items-center justify-center rounded-full border-4 text-2xl shadow-lg transition ${
+                completed
+                  ? 'border-[var(--world-accent)] bg-[var(--world-accent)]'
+                  : unlocked
+                    ? 'animate-pulse border-[var(--world-accent)]/70 bg-white/10 active:scale-95'
+                    : 'border-white/10 bg-white/[0.03] text-white/40'
+              }`}
+              style={{ width: BOSS_NODE_SIZE, height: BOSS_NODE_SIZE }}
+            >
+              {completed ? '✓' : unlocked ? '👑' : '🔒'}
+            </div>
+          )
+
+          return (
+            <div
+              key="boss"
+              className="absolute flex flex-col items-center gap-1"
+              style={{ left: `${bossPoint.x}%`, top: bossPoint.y, transform: 'translate(-50%, -50%)' }}
+            >
+              {unlocked ? <Link to={`/world/${world.id}/boss`}>{node}</Link> : node}
+              <span className="max-w-[7rem] truncate text-center text-xs font-bold text-white">
+                {world.boss.title}
+              </span>
+            </div>
+          )
+        })()}
     </div>
   )
 }

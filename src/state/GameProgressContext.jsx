@@ -65,6 +65,15 @@ export function GameProgressProvider({ children }) {
     })
   }
 
+  function completeBoss(worldId) {
+    setProgress((prev) => {
+      if (prev.completedBossWorldIds.includes(worldId)) return prev
+      const next = { ...prev, completedBossWorldIds: [...prev.completedBossWorldIds, worldId] }
+      saveProgress(next)
+      return next
+    })
+  }
+
   function isMissionCompleted(missionId) {
     return progress.completedMissionIds.includes(missionId)
   }
@@ -77,8 +86,22 @@ export function GameProgressProvider({ children }) {
     return isMissionCompleted(previousMission.id)
   }
 
-  function isWorldCompleted(world) {
+  function allMissionsCompleted(world) {
     return world.missions.length > 0 && world.missions.every((m) => isMissionCompleted(m.id))
+  }
+
+  // הבוס נפתח רק אחרי שכל המשימות הרגילות בעולם הושלמו.
+  function isBossUnlocked(world) {
+    return Boolean(world.boss) && allMissionsCompleted(world)
+  }
+
+  function isBossCompleted(worldId) {
+    return progress.completedBossWorldIds.includes(worldId)
+  }
+
+  function isWorldCompleted(world) {
+    if (!allMissionsCompleted(world)) return false
+    return world.boss ? isBossCompleted(world.id) : true
   }
 
   const value = useMemo(
@@ -86,8 +109,11 @@ export function GameProgressProvider({ children }) {
       ...progress,
       completeMission,
       recordAnswer,
+      completeBoss,
       isMissionCompleted,
       isMissionUnlocked,
+      isBossUnlocked,
+      isBossCompleted,
       isWorldCompleted,
     }),
     [progress],

@@ -5,6 +5,7 @@ const STORAGE_KEY = 'history-game-progress'
 function defaultState() {
   return {
     completedMissionIds: [],
+    completedBossWorldIds: [],
     hearts: 3,
     heartsLastRegenAt: Date.now(),
     xp: 0,
