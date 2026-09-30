@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { loadProgress, saveProgress } from './progressStorage.js'
 
 const GameProgressContext = createContext(null)
@@ -26,6 +26,10 @@ function withHeartsRegen(state) {
 
 export function GameProgressProvider({ children }) {
   const [progress, setProgress] = useState(() => withHeartsRegen(loadProgress()))
+  // אירוע "זכייה אחרונה" - לא חלק מהמצב הנשמר, רק כדי שרכיבי UI יוכלו להריץ אנימציית +XP/+מטבעות
+  // ברגע שהיא קורית (id מתקדם תמיד, כדי לזהות אירוע חדש גם כשהערכים זהים לקודם).
+  const [lastGain, setLastGain] = useState(null)
+  const gainIdRef = useRef(0)
 
   // מרעננים לבבות כשחוזרים לטאב, לא ברקע כל הזמן.
   useEffect(() => {
@@ -48,14 +52,17 @@ export function GameProgressProvider({ children }) {
   // מזינים את תוצאת התשובה למערכות ❤️/⭐/🪙/🔥. אין קשר לפתיחת המשימה הבאה -
   // זו נשארת נפתחת גם על תשובה שגויה (completeMission נקרא בנפרד).
   function recordAnswer(correct) {
+    const streak = correct ? progress.streak + 1 : 0
+    const xpGained = correct ? XP_PER_CORRECT + (STREAK_BONUSES[streak] || 0) : 0
+    const coinsGained = correct ? COINS_PER_CORRECT : 0
+
     setProgress((prev) => {
       const next = { ...prev }
       if (correct) {
-        const streak = prev.streak + 1
         next.streak = streak
         next.bestStreak = Math.max(prev.bestStreak, streak)
-        next.xp = prev.xp + XP_PER_CORRECT + (STREAK_BONUSES[streak] || 0)
-        next.coins = prev.coins + COINS_PER_CORRECT
+        next.xp = prev.xp + xpGained
+        next.coins = prev.coins + coinsGained
       } else {
         next.streak = 0
         next.hearts = Math.max(0, prev.hearts - 1)
@@ -63,6 +70,9 @@ export function GameProgressProvider({ children }) {
       saveProgress(next)
       return next
     })
+
+    gainIdRef.current += 1
+    setLastGain({ id: gainIdRef.current, correct, xpGained, coinsGained, streak })
   }
 
   function completeBoss(worldId) {
@@ -107,6 +117,7 @@ export function GameProgressProvider({ children }) {
   const value = useMemo(
     () => ({
       ...progress,
+      lastGain,
       completeMission,
       recordAnswer,
       completeBoss,
@@ -116,7 +127,7 @@ export function GameProgressProvider({ children }) {
       isBossCompleted,
       isWorldCompleted,
     }),
-    [progress],
+    [progress, lastGain],
   )
 
   return <GameProgressContext.Provider value={value}>{children}</GameProgressContext.Provider>

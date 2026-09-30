@@ -68,6 +68,11 @@ export default function WorldMap({ worlds }) {
             <span className="max-w-[6.5rem] truncate text-center text-xs font-semibold text-white">
               {world.name}
             </span>
+            {world.years && (
+              <span className="max-w-[6.5rem] truncate text-center text-[10px] font-medium text-white/50">
+                {world.years}
+              </span>
+            )}
           </div>
         )
 

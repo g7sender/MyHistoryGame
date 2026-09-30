@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useGameProgress } from '../../state/GameProgressContext.jsx'
 
 const ROW_HEIGHT = 112
@@ -51,7 +52,9 @@ export default function MissionPath({ world }) {
         const completed = isMissionCompleted(mission.id)
 
         const node = (
-          <div
+          <motion.div
+            animate={{ scale: completed ? [1, 1.2, 1] : 1 }}
+            transition={{ duration: 0.4 }}
             className={`flex shrink-0 items-center justify-center rounded-full border-4 text-lg font-bold shadow-lg transition ${
               completed
                 ? 'border-[var(--world-accent)] bg-[var(--world-accent)] text-[var(--world-secondary)]'
@@ -62,23 +65,30 @@ export default function MissionPath({ world }) {
             style={{ width: NODE_SIZE, height: NODE_SIZE }}
           >
             {completed ? '✓' : unlocked ? index + 1 : '🔒'}
-          </div>
+          </motion.div>
         )
 
         return (
           <div
             key={mission.id}
-            className="absolute flex flex-col items-center gap-1"
+            className="absolute"
             style={{ left: `${x}%`, top: y, transform: 'translate(-50%, -50%)' }}
           >
-            {unlocked ? (
-              <Link to={`/world/${world.id}/mission/${mission.id}/story`}>{node}</Link>
-            ) : (
-              node
-            )}
-            <span className="max-w-[7rem] truncate text-center text-xs font-medium text-white/70">
-              {mission.title}
-            </span>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="flex flex-col items-center gap-1"
+            >
+              {unlocked ? (
+                <Link to={`/world/${world.id}/mission/${mission.id}/story`}>{node}</Link>
+              ) : (
+                node
+              )}
+              <span className="max-w-[7rem] truncate text-center text-xs font-medium text-white/70">
+                {mission.title}
+              </span>
+            </motion.div>
           </div>
         )
       })}
@@ -88,30 +98,47 @@ export default function MissionPath({ world }) {
           const unlocked = isBossUnlocked(world)
           const completed = isBossCompleted(world.id)
           const node = (
-            <div
+            <motion.div
+              animate={
+                completed ? { scale: [1, 1.2, 1] } : unlocked ? { scale: [1, 1.06, 1] } : { scale: 1 }
+              }
+              transition={
+                completed
+                  ? { duration: 0.4 }
+                  : unlocked
+                    ? { repeat: Infinity, duration: 1.6, ease: 'easeInOut' }
+                    : { duration: 0.2 }
+              }
               className={`flex shrink-0 items-center justify-center rounded-full border-4 text-2xl shadow-lg transition ${
                 completed
                   ? 'border-[var(--world-accent)] bg-[var(--world-accent)]'
                   : unlocked
-                    ? 'animate-pulse border-[var(--world-accent)]/70 bg-white/10 active:scale-95'
+                    ? 'border-[var(--world-accent)]/70 bg-white/10 active:scale-95'
                     : 'border-white/10 bg-white/[0.03] text-white/40'
               }`}
               style={{ width: BOSS_NODE_SIZE, height: BOSS_NODE_SIZE }}
             >
               {completed ? '✓' : unlocked ? '👑' : '🔒'}
-            </div>
+            </motion.div>
           )
 
           return (
             <div
               key="boss"
-              className="absolute flex flex-col items-center gap-1"
+              className="absolute"
               style={{ left: `${bossPoint.x}%`, top: bossPoint.y, transform: 'translate(-50%, -50%)' }}
             >
-              {unlocked ? <Link to={`/world/${world.id}/boss`}>{node}</Link> : node}
-              <span className="max-w-[7rem] truncate text-center text-xs font-bold text-white">
-                {world.boss.title}
-              </span>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: missions.length * 0.05 }}
+                className="flex flex-col items-center gap-1"
+              >
+                {unlocked ? <Link to={`/world/${world.id}/boss`}>{node}</Link> : node}
+                <span className="max-w-[7rem] truncate text-center text-xs font-bold text-white">
+                  {world.boss.title}
+                </span>
+              </motion.div>
             </div>
           )
         })()}

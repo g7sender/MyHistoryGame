@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import WorldAtlasBackground from '../ui/WorldAtlasBackground.jsx'
 
 // challenge.points - מערך {label, x, y, correct} (אחוזים על מפה מאוירת מוקטנת).
 export default function MapLocationChallenge({ challenge, onAnswered }) {
@@ -20,18 +21,7 @@ export default function MapLocationChallenge({ challenge, onAnswered }) {
 
   return (
     <div className="relative h-72 w-full overflow-hidden rounded-2xl border border-white/10">
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="miniMapBg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#1e293b" />
-            <stop offset="100%" stopColor="#0f172a" />
-          </linearGradient>
-        </defs>
-        <rect width="100" height="100" fill="url(#miniMapBg)" />
-        <circle cx="20" cy="30" r="14" fill="rgba(255,255,255,0.04)" />
-        <circle cx="75" cy="65" r="18" fill="rgba(255,255,255,0.04)" />
-        <circle cx="45" cy="80" r="10" fill="rgba(255,255,255,0.04)" />
-      </svg>
+      <WorldAtlasBackground />
 
       {challenge.points.map((point) => (
         <div

@@ -1,8 +1,10 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { getWorldById } from '../../data/worlds.js'
 import { useGameProgress } from '../../state/GameProgressContext.jsx'
 import TopBar from '../ui/TopBar.jsx'
 import PlayerStatsBar from '../ui/PlayerStatsBar.jsx'
+import { pageTransition } from '../ui/pageTransition.js'
 
 export default function BossIntroScreen() {
   const { worldId } = useParams()
@@ -16,7 +18,8 @@ export default function BossIntroScreen() {
   }
 
   return (
-    <div
+    <motion.div
+      {...pageTransition}
       className="flex min-h-full flex-col pb-6"
       style={{
         '--world-primary': world.theme.primary,
@@ -42,6 +45,6 @@ export default function BossIntroScreen() {
           התחילו את האתגר →
         </button>
       </div>
-    </div>
+    </motion.div>
   )
 }

@@ -1,8 +1,10 @@
 import { Navigate, useParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { getWorldById } from '../../data/worlds.js'
 import TopBar from '../ui/TopBar.jsx'
 import PlayerStatsBar from '../ui/PlayerStatsBar.jsx'
 import MissionPath from '../ui/MissionPath.jsx'
+import { pageTransition } from '../ui/pageTransition.js'
 
 export default function MissionBoard() {
   const { worldId } = useParams()
@@ -11,7 +13,8 @@ export default function MissionBoard() {
   if (!world) return <Navigate to="/" replace />
 
   return (
-    <div
+    <motion.div
+      {...pageTransition}
       className="min-h-full pb-10"
       style={{
         '--world-primary': world.theme.primary,
@@ -26,6 +29,6 @@ export default function MissionBoard() {
       <main className="pb-6">
         <MissionPath world={world} />
       </main>
-    </div>
+    </motion.div>
   )
 }

@@ -1,9 +1,11 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { getMissionById, getWorldById } from '../../data/worlds.js'
 import { useGameProgress } from '../../state/GameProgressContext.jsx'
 import { publicUrl } from '../../utils/publicUrl.js'
 import TopBar from '../ui/TopBar.jsx'
 import PlayerStatsBar from '../ui/PlayerStatsBar.jsx'
+import { pageTransition } from '../ui/pageTransition.js'
 
 export default function StoryScreen() {
   const { worldId, missionId } = useParams()
@@ -18,7 +20,8 @@ export default function StoryScreen() {
   }
 
   return (
-    <div
+    <motion.div
+      {...pageTransition}
       className="flex min-h-full flex-col pb-6"
       style={{
         '--world-primary': world.theme.primary,
@@ -51,6 +54,6 @@ export default function StoryScreen() {
           למשימה →
         </button>
       </div>
-    </div>
+    </motion.div>
   )
 }

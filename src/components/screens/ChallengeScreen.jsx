@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { getMissionById, getWorldById } from '../../data/worlds.js'
 import { useGameProgress } from '../../state/GameProgressContext.jsx'
 import TopBar from '../ui/TopBar.jsx'
 import PlayerStatsBar from '../ui/PlayerStatsBar.jsx'
+import AnswerFeedback from '../ui/AnswerFeedback.jsx'
+import { pageTransition } from '../ui/pageTransition.js'
 import { getChallengeComponent } from '../challenges/challengeRegistry.js'
 
 export default function ChallengeScreen() {
@@ -31,7 +34,8 @@ export default function ChallengeScreen() {
   }
 
   return (
-    <div
+    <motion.div
+      {...pageTransition}
       key={mission.id}
       className="flex min-h-full flex-col pb-6"
       style={{
@@ -49,16 +53,7 @@ export default function ChallengeScreen() {
         </h2>
         <ChallengeWidget challenge={challenge} onAnswered={handleAnswered} />
 
-        {hasAnswered && (
-          <div
-            className={`mt-5 rounded-xl border p-4 ${
-              result ? 'border-green-400 bg-green-500/10' : 'border-red-400 bg-red-500/10'
-            }`}
-          >
-            <p className="font-bold text-white">{result ? 'תשובה נכונה! 🎉' : 'לא בדיוק...'}</p>
-            <p className="mt-2 text-sm leading-relaxed text-white/80">{challenge.explanation}</p>
-          </div>
-        )}
+        {hasAnswered && <AnswerFeedback result={result} explanation={challenge.explanation} />}
       </main>
 
       {hasAnswered && (
@@ -73,6 +68,6 @@ export default function ChallengeScreen() {
           </button>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }

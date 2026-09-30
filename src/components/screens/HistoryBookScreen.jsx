@@ -1,14 +1,16 @@
+import { motion } from 'framer-motion'
 import worlds from '../../data/worlds.js'
 import { useGameProgress } from '../../state/GameProgressContext.jsx'
 import TopBar from '../ui/TopBar.jsx'
 import PlayerStatsBar from '../ui/PlayerStatsBar.jsx'
+import { pageTransition } from '../ui/pageTransition.js'
 
 export default function HistoryBookScreen() {
   const { isWorldCompleted } = useGameProgress()
   const sortedWorlds = [...worlds].sort((a, b) => a.order - b.order)
 
   return (
-    <div className="min-h-full bg-slate-950 pb-10">
+    <motion.div {...pageTransition} className="min-h-full bg-slate-950 pb-10">
       <TopBar title="📖 ספר ההיסטוריה" subtitle="פרק לכל עולם שכבשתם" />
       <PlayerStatsBar />
       <main className="flex flex-col gap-3 px-4 pt-4">
@@ -47,6 +49,6 @@ export default function HistoryBookScreen() {
           )
         })}
       </main>
-    </div>
+    </motion.div>
   )
 }

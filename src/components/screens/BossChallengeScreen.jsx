@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { getWorldById } from '../../data/worlds.js'
 import { useGameProgress } from '../../state/GameProgressContext.jsx'
 import { shuffleArray } from '../../utils/shuffleArray.js'
 import TopBar from '../ui/TopBar.jsx'
 import PlayerStatsBar from '../ui/PlayerStatsBar.jsx'
+import AnswerFeedback from '../ui/AnswerFeedback.jsx'
+import { pageTransition } from '../ui/pageTransition.js'
 import { getChallengeComponent } from '../challenges/challengeRegistry.js'
 
 const MAX_BOSS_QUESTIONS = 7
@@ -57,7 +60,8 @@ export default function BossChallengeScreen() {
   }
 
   return (
-    <div
+    <motion.div
+      {...pageTransition}
       key={`${world.id}-${index}`}
       className="flex min-h-full flex-col pb-6"
       style={{
@@ -76,16 +80,7 @@ export default function BossChallengeScreen() {
         <h2 className="mb-5 text-lg font-bold leading-relaxed text-white">{challenge.question}</h2>
         <ChallengeWidget challenge={challenge} onAnswered={handleAnswered} />
 
-        {hasAnswered && (
-          <div
-            className={`mt-5 rounded-xl border p-4 ${
-              result ? 'border-green-400 bg-green-500/10' : 'border-red-400 bg-red-500/10'
-            }`}
-          >
-            <p className="font-bold text-white">{result ? 'תשובה נכונה! 🎉' : 'לא בדיוק...'}</p>
-            <p className="mt-2 text-sm leading-relaxed text-white/80">{challenge.explanation}</p>
-          </div>
-        )}
+        {hasAnswered && <AnswerFeedback result={result} explanation={challenge.explanation} />}
       </main>
 
       {hasAnswered && (
@@ -100,6 +95,6 @@ export default function BossChallengeScreen() {
           </button>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }
