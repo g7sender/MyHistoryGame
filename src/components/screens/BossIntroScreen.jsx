@@ -12,7 +12,7 @@ export default function BossIntroScreen() {
   const world = getWorldById(worldId)
   const { isBossUnlocked } = useGameProgress()
 
-  if (!world || !world.boss) return <Navigate to="/" replace />
+  if (!world || !world.boss) return <Navigate to="/map" replace />
   if (!isBossUnlocked(world)) {
     return <Navigate to={`/world/${world.id}`} replace />
   }

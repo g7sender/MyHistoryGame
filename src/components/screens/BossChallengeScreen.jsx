@@ -29,7 +29,7 @@ export default function BossChallengeScreen() {
   const [correctCount, setCorrectCount] = useState(0)
   const [result, setResult] = useState(null)
 
-  if (!world || !world.boss) return <Navigate to="/" replace />
+  if (!world || !world.boss) return <Navigate to="/map" replace />
   if (!isBossUnlocked(world)) {
     return <Navigate to={`/world/${world.id}`} replace />
   }

@@ -66,9 +66,14 @@ export default function PlayerStatsBar() {
           </span>
         )}
       </div>
-      <Link to="/book" aria-label="ספר ההיסטוריה" className="text-lg active:scale-90">
-        📖
-      </Link>
+      <div className="flex items-center gap-3">
+        <Link to="/book" aria-label="ספר ההיסטוריה" className="text-lg active:scale-90">
+          📖
+        </Link>
+        <Link to="/figures" aria-label="דמויות היסטוריות" className="text-lg active:scale-90">
+          🏛️
+        </Link>
+      </div>
     </div>
   )
 }

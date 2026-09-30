@@ -39,7 +39,7 @@ export default function BossVictoryScreen() {
     [],
   )
 
-  if (!world || !world.boss) return <Navigate to="/" replace />
+  if (!world || !world.boss) return <Navigate to="/map" replace />
   // המסך הזה מגיע רק מניווט פנימי מייד אחרי סיום האתגר (state בזיכרון) - גישה ישירה
   // (או רענון) שולחת בחזרה ללוח המשימות, כי אין ציון לשחזר.
   if (!location.state) return <Navigate to={`/world/${world.id}`} replace />
@@ -113,7 +113,7 @@ export default function BossVictoryScreen() {
         <motion.button
           variants={itemVariants}
           type="button"
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/map')}
           className="w-full rounded-xl border border-white/20 py-4 text-lg font-bold text-white active:scale-[0.98]"
         >
           חזרה למפה

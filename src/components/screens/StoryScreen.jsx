@@ -14,7 +14,7 @@ export default function StoryScreen() {
   const mission = getMissionById(world, missionId)
   const { isMissionUnlocked } = useGameProgress()
 
-  if (!world || !mission) return <Navigate to="/" replace />
+  if (!world || !mission) return <Navigate to="/map" replace />
   if (!isMissionUnlocked(world, mission.id)) {
     return <Navigate to={`/world/${world.id}`} replace />
   }

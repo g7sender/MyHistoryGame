@@ -17,7 +17,7 @@ export default function ChallengeScreen() {
   const { isMissionUnlocked, completeMission, recordAnswer } = useGameProgress()
   const [result, setResult] = useState(null)
 
-  if (!world || !mission) return <Navigate to="/" replace />
+  if (!world || !mission) return <Navigate to="/map" replace />
   if (!isMissionUnlocked(world, mission.id)) {
     return <Navigate to={`/world/${world.id}`} replace />
   }

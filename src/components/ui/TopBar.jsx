@@ -22,8 +22,8 @@ export default function TopBar({ title, subtitle, onBack }) {
         </div>
       </div>
       <Link
-        to="/"
-        aria-label="חזרה למסך הראשי - מסע בזמן"
+        to="/map"
+        aria-label="חזרה למפת העולמות"
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-lg active:bg-white/20"
       >
         🏠

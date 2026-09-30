@@ -10,7 +10,7 @@ export default function MissionBoard() {
   const { worldId } = useParams()
   const world = getWorldById(worldId)
 
-  if (!world) return <Navigate to="/" replace />
+  if (!world) return <Navigate to="/map" replace />
 
   return (
     <motion.div
